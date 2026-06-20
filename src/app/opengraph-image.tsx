@@ -68,7 +68,7 @@ export default function Image() {
             marginBottom: 44,
           }}
         >
-          Singapore&apos;s Most Comprehensive Postal Code Directory
+          Singapore's Most Comprehensive Postal Code Directory
         </div>
         <div style={{ display: "flex", gap: 20 }}>
           {["121,000+ Postal Codes", "141,000+ Buildings", "All 28 Districts"].map(
