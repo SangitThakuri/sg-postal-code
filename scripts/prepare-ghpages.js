@@ -20,12 +20,22 @@ if (!fs.existsSync(SRC)) {
 fs.copyFileSync(SRC, DST);
 
 const written = fs.readFileSync(DST, "utf-8");
+
 if (!written.includes("generateStaticParams")) {
-  console.error("Copy verification failed: generateStaticParams not found in destination.");
+  console.error("Verification failed: generateStaticParams not found in destination.");
   process.exit(1);
 }
-if (written.includes('"use client"')) {
-  console.error('Copy verification failed: "use client" found in destination — should not be there.');
+
+// Check for "use client" as a DIRECTIVE (its own line), not a comment mention.
+// A directive looks like: "use client"; or 'use client'; as a standalone statement.
+const hasClientDirective = written.split("\n").some((line) => {
+  const t = line.trim();
+  return t === '"use client";' || t === "'use client';" ||
+         t === '"use client"' || t === "'use client'";
+});
+
+if (hasClientDirective) {
+  console.error('Verification failed: "use client" directive found in destination — Server Component wrapper must not have it.');
   process.exit(1);
 }
 

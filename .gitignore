@@ -26,8 +26,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# data (downloaded/generated at build time)
-/public/data/buildings.json
+# data (generated at build time — buildings.json IS tracked in git)
 /public/data/sectors/
 
 # Claude Code session data
