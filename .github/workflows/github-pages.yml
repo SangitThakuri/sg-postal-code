@@ -36,7 +36,10 @@ jobs:
       - name: Split buildings data into sector files
         run: node scripts/split-data.js
 
-      - name: Use client-side postal page (static export compatible)
+      - name: Build client-side search index
+        run: node scripts/build-search-index.js
+
+      - name: Prepare source tree for static export
         run: node scripts/prepare-ghpages.js
 
       - name: Build static site

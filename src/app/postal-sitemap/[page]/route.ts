@@ -4,6 +4,13 @@ import { getAllPostalCodes } from "@/lib/data";
 const BASE = "https://www.sgpostalcode.com";
 const BATCH = 40000;
 
+// Required for Next.js static export: tells the build which pages to pre-generate.
+export async function generateStaticParams() {
+  const postals = await getAllPostalCodes();
+  const batches = Math.ceil(postals.length / BATCH);
+  return Array.from({ length: batches }, (_, i) => ({ page: String(i + 1) }));
+}
+
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ page: string }> }) {
   const { page: pageStr } = await params;
   const page = parseInt(pageStr, 10);
