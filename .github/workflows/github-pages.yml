@@ -37,7 +37,7 @@ jobs:
         run: node scripts/split-data.js
 
       - name: Use client-side postal page (static export compatible)
-        run: cp "src/app/postal/[code]/page.static.tsx" "src/app/postal/[code]/page.tsx"
+        run: node scripts/prepare-ghpages.js
 
       - name: Build static site
         env:
