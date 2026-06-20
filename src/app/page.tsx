@@ -3,10 +3,13 @@ import type { Metadata } from "next";
 import SearchBar from "@/components/SearchBar";
 import { SG_DISTRICTS } from "@/lib/data";
 
+const BASE_URL = "https://www.sgpostalcode.com";
+
 export const metadata: Metadata = {
   title: "SG Postal Code Finder - Search Singapore Postal Codes",
   description:
     "Find any Singapore postal code instantly. Search by 6-digit postal code, building name, or road name. Get full address, location on map, and more.",
+  alternates: { canonical: BASE_URL },
 };
 
 const POPULAR_SEARCHES = [
@@ -60,8 +63,49 @@ const FEATURES = [
   },
 ];
 
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "SG Postal Code Finder",
+  url: BASE_URL,
+  description:
+    "Singapore's most comprehensive postal code directory — 121,000+ codes, 141,000+ buildings.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${BASE_URL}/search?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "SGPostalCode.com",
+  url: BASE_URL,
+  logo: `${BASE_URL}/icon.svg`,
+  description:
+    "Free Singapore postal code search directory covering 121,000+ postal codes and 141,000+ buildings.",
+  areaServed: {
+    "@type": "Country",
+    name: "Singapore",
+  },
+  knowsAbout: ["Singapore postal codes", "Singapore addresses", "SingPost"],
+};
+
 export default function HomePage() {
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
     <div>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white overflow-hidden">
@@ -229,5 +273,6 @@ export default function HomePage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

@@ -14,11 +14,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
     return {
       title: `Search results for "${q}" - SG Postal Code Finder`,
       description: `Find Singapore postal codes matching "${q}". Browse buildings, addresses, and locations.`,
+      robots: { index: false, follow: true },
     };
   }
   return {
     title: "Browse Singapore Postal Codes - SG Postal Code Finder",
     description: "Browse and search all Singapore postal codes by building name, road, or 6-digit code.",
+    alternates: { canonical: "https://www.sgpostalcode.com/search" },
   };
 }
 

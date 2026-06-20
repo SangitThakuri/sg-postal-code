@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     title: "SG Postal Code Finder - Singapore Postal Code Search",
     description:
       "Find Singapore postal codes, building names, addresses and locations.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
