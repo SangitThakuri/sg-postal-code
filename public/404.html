@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SGPostalCode.com</title>
+  <script>
+    // GitHub Pages SPA redirect trick.
+    // Stores the intended URL in sessionStorage, then sends the user to the
+    // root where the Next.js client runtime picks it up and restores the path.
+    var path = window.location.pathname;
+    var search = window.location.search;
+    sessionStorage.setItem('ghpages_redirect', path + search);
+    window.location.replace('/');
+  </script>
+</head>
+<body></body>
+</html>
