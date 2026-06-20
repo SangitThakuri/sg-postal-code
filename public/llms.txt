@@ -1,0 +1,78 @@
+# SGPostalCode.com
+
+> Singapore postal code search and lookup — the most comprehensive directory of Singapore's 121,000+ postal codes and 141,000+ buildings.
+
+SGPostalCode.com lets you instantly look up any Singapore postal code (6-digit format) to get the building name, full address, road name, block number, GPS coordinates, postal district, region, building type classification, and an interactive map. You can also search in reverse — type a building name, road, or area to find its postal code.
+
+## What this site covers
+
+- **121,361 unique Singapore postal codes** covering the entire island
+- **141,726 building entries** including HDB blocks, condos, commercial buildings, MRT stations, schools, hospitals, government buildings, hotels, and industrial properties
+- **28 postal districts** (sectors 01–83) spanning Central, North, North-East, East, and West regions
+- Full address data: postal code, building name, block number, road name, full address string, GPS coordinates (WGS84 latitude/longitude)
+
+## How Singapore postal codes work
+
+Singapore uses a **6-digit postal code system** introduced by SingPost in 1995. The first 2 digits identify the **postal sector** (geographic zone). Unlike many countries where one code covers a wide area, Singapore postal codes are highly specific — typically one building or a small cluster.
+
+Postal sector ranges:
+- 01–08: City & CBD (Downtown Core, Marina Bay)
+- 09–10: Orchard Road, River Valley
+- 11–13: Novena, Toa Payoh, Thomson
+- 14–16: Geylang, Eunos, Katong
+- 17–19: Loyang, Changi, Tampines (East)
+- 20–21: Bishan, Ang Mo Kio (North-East)
+- 22–23: Jurong, Buona Vista (West)
+- 25–28: Yishun, Sembawang, Woodlands (North)
+- 31–33: Bukit Timah, Clementi (West)
+- 34–37: Serangoon, Hougang, Punggol (North-East)
+- 38–42: Sengkang, Pasir Ris (North-East)
+- 43–45: Bukit Merah, Queenstown (Central)
+- 46–52: Bedok, Simei (East)
+- 53–58: Choa Chu Kang, Bukit Panjang (West)
+- 59–67: Jurong West, Boon Lay (West)
+- 68–71: Lim Chu Kang, Tengah (North)
+- 72–73: Tuas (West)
+- 75–83: Punggol North, Sentosa, Southern Islands
+
+## Key pages
+
+- [Home — Search](https://www.sgpostalcode.com/) – Main search interface
+- [Browse Postal Codes](https://www.sgpostalcode.com/search) – Browse by area or postal sector
+- [Postal Code Detail Example](https://www.sgpostalcode.com/postal/018906) – `018906` = Singapore Chinese Cultural Centre, 1 Straits Boulevard
+- [Search API](https://www.sgpostalcode.com/api/search?q=marina+bay&limit=10) – JSON search endpoint (GET, params: `q`, `limit` max 100)
+- [About Us](https://www.sgpostalcode.com/about)
+- [Contact](https://www.sgpostalcode.com/contact)
+- [Privacy Policy](https://www.sgpostalcode.com/privacy-policy)
+- [Terms of Service](https://www.sgpostalcode.com/terms-of-service)
+- [Disclaimer](https://www.sgpostalcode.com/disclaimer)
+- [Cookie Policy](https://www.sgpostalcode.com/cookie-policy)
+
+## API
+
+**Search endpoint:** `GET /api/search?q={query}&limit={n}`
+
+Parameters:
+- `q` (required): search string — postal code digits, building name, road name, or address fragment
+- `limit` (optional, default 30, max 100): number of results to return
+
+Response: JSON array of objects with fields: `postal`, `buildingName`, `address`, `roadName`, `blkNo`, `lat`, `lng`
+
+Example: `GET /api/search?q=changi+airport&limit=5`
+
+**Full dataset endpoint:** `GET /api/buildings`
+
+Returns the complete buildings dataset as a JSON array of 141,726 entries. Each entry contains: `POSTAL`, `BUILDING`, `BLK_NO`, `ROAD_NAME`, `ADDRESS`, `SEARCHVAL`, `LATITUDE`, `LONGITUDE`, `X`, `Y`. Streamed response (~57MB). Self-hosted mirror of the source dataset.
+
+## Data source
+
+Building data is sourced from Singapore's official public postal address database, maintained in the open-source repository [xkjyeah/singapore-postal-codes](https://github.com/xkjyeah/singapore-postal-codes). Data is refreshed periodically.
+
+## Sitemap
+
+Full XML sitemap index: https://www.sgpostalcode.com/sitemap.xml
+(Covers all 121k+ postal code pages across multiple sub-sitemaps)
+
+## Not affiliated with
+
+SGPostalCode.com is independent and not affiliated with SingPost, the Singapore Government, IMDA, SLA, or any government agency. For authoritative postal data, use [SingPost](https://www.singpost.com) or [OneMap](https://www.onemap.gov.sg).
