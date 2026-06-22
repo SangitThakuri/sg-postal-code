@@ -30,23 +30,28 @@ export const TOLA_IN_GRAMS = 11.6638;
 export const TROY_OZ_IN_GRAMS = 31.1035;
 
 // ─── Mock live price (swap for real API call in production) ───
+// Base: 24K = 287,300 NPR/tola (FENEGOSIDA rate)
+// Derived: per gram = 287,300 ÷ 11.6638 = 24,634
+//          22K tola = 287,300 × 22/24 = 263,358
+//          18K tola = 287,300 × 18/24 = 215,475
+// Note: Nepal price > spot×rate because it includes ~10% import duty + 13% VAT
 export const MOCK_GOLD_PRICE: GoldPrice = {
-  price_24k_tola: 191800,
-  price_22k_tola: 175983,
-  price_18k_tola: 143850,
-  price_24k_gram: 16443,
-  price_22k_gram: 15073,
-  price_18k_gram: 12332,
-  price_usd_per_oz: 3709,
-  usd_npr_rate: 137.85,
-  change_amount: 1450,
-  change_percent: 0.76,
-  high_24h: 192500,
-  low_24h: 190100,
-  silver_per_tola: 2285,
-  silver_per_gram: 196,
-  silver_change_amount: 35,
-  silver_change_percent: 1.55,
+  price_24k_tola: 287300,
+  price_22k_tola: 263358,
+  price_18k_tola: 215475,
+  price_24k_gram: 24634,
+  price_22k_gram: 22582,
+  price_18k_gram: 18476,
+  price_usd_per_oz: 3350,
+  usd_npr_rate: 137.50,
+  change_amount: 1800,
+  change_percent: 0.63,
+  high_24h: 288600,
+  low_24h: 285100,
+  silver_per_tola: 3250,
+  silver_per_gram: 279,
+  silver_change_amount: 45,
+  silver_change_percent: 1.40,
   last_updated: new Date().toISOString(),
 };
 
@@ -62,51 +67,55 @@ export function generateHistory(period: TimePeriod): HistoricalPoint[] {
   const points: HistoricalPoint[] = [];
 
   if (period === "1D") {
-    const base = 191000;
+    // Intra-day range ~285,100–288,600
+    const base = 286000;
     for (let h = 23; h >= 0; h--) {
       const d = new Date(now);
       d.setHours(now.getHours() - h, 0, 0, 0);
       points.push({
         time: d.toLocaleTimeString("en-NP", { hour: "2-digit", minute: "2-digit" }),
-        price: seed(base, h, 800),
+        price: seed(base, h, 1200),
       });
     }
-    points[points.length - 1].price = 191800;
+    points[points.length - 1].price = 287300;
   } else if (period === "7D") {
-    const base = 189500;
+    // 7 days ago ~283,000 → today 287,300
+    const base = 283500;
     for (let d = 6; d >= 0; d--) {
       const dt = new Date(now);
       dt.setDate(now.getDate() - d);
       points.push({
         time: dt.toLocaleDateString("en-NP", { month: "short", day: "numeric" }),
-        price: seed(base + d * 300, d, 1200),
+        price: seed(base + (6 - d) * 600, d, 1500),
       });
     }
-    points[points.length - 1].price = 191800;
+    points[points.length - 1].price = 287300;
   } else if (period === "30D") {
-    const startBase = 182000;
+    // 30 days ago ~270,000 → today 287,300 (uptrend +17,300)
+    const startBase = 270000;
     for (let d = 29; d >= 0; d--) {
       const dt = new Date(now);
       dt.setDate(now.getDate() - d);
-      const trend = ((29 - d) / 29) * 9800;
+      const trend = ((29 - d) / 29) * 17300;
       points.push({
         time: dt.toLocaleDateString("en-NP", { month: "short", day: "numeric" }),
-        price: seed(startBase + trend, d, 1800),
+        price: seed(startBase + trend, d, 2500),
       });
     }
-    points[points.length - 1].price = 191800;
+    points[points.length - 1].price = 287300;
   } else {
-    const startBase = 155000;
+    // 1 year ago ~210,000 → today 287,300 (uptrend +77,300)
+    const startBase = 210000;
     for (let w = 51; w >= 0; w--) {
       const dt = new Date(now);
       dt.setDate(now.getDate() - w * 7);
-      const trend = ((51 - w) / 51) * 36800;
+      const trend = ((51 - w) / 51) * 77300;
       points.push({
         time: dt.toLocaleDateString("en-NP", { month: "short", day: "numeric" }),
-        price: seed(startBase + trend, w, 3500),
+        price: seed(startBase + trend, w, 5000),
       });
     }
-    points[points.length - 1].price = 191800;
+    points[points.length - 1].price = 287300;
   }
 
   return points;
@@ -122,18 +131,21 @@ export interface PriceTableRow {
 }
 
 export function getPriceHistory(): PriceTableRow[] {
-  const today = MOCK_GOLD_PRICE.price_24k_tola;
-  const deltas = [0, -1450, +820, -300, +1100, -650, +2200];
+  const today = MOCK_GOLD_PRICE.price_24k_tola; // 287,300
+  // Daily deltas in NPR (positive = price rose that day)
+  const deltas = [+1800, -900, +2200, -600, +1500, -1100, +3000];
+  let running = today;
   return deltas.map((delta, i) => {
     const dt = new Date();
     dt.setDate(dt.getDate() - i);
-    const p24 = today + deltas.slice(0, i + 1).reduce((a, b) => a - b, 0);
+    const p24 = running;
+    if (i < deltas.length - 1) running -= deltas[i + 1];
     return {
       date: dt.toLocaleDateString("en-NP", { weekday: "short", month: "short", day: "numeric" }),
       price_24k: p24,
       price_22k: Math.round(p24 * 22 / 24),
       price_18k: Math.round(p24 * 18 / 24),
-      change: i === 0 ? 1450 : -deltas[i],
+      change: delta,
     };
   });
 }
@@ -151,8 +163,8 @@ export interface NewsArticle {
 export const NEWS_ARTICLES: NewsArticle[] = [
   {
     slug: "gold-price-nepal-june-2026",
-    title: "Gold Price in Nepal Hits Record High of NPR 1,91,800 per Tola",
-    summary: "Nepal's gold market reached a new milestone today as FENEGOSIDA announced the 24-karat gold price at NPR 1,91,800 per tola, reflecting global bullion market trends and rupee depreciation against the US dollar.",
+    title: "Gold Price in Nepal Hits Record High of NPR 2,87,300 per Tola",
+    summary: "Nepal's gold market reached a new milestone today as FENEGOSIDA announced the 24-karat gold price at NPR 2,87,300 per tola, reflecting global bullion market trends and sustained rupee depreciation against the US dollar.",
     date: "2026-06-20",
     category: "Market Update",
     readTime: "3 min read",
@@ -184,7 +196,7 @@ export const NEWS_ARTICLES: NewsArticle[] = [
   {
     slug: "silver-price-nepal-analysis",
     title: "Silver Prices in Nepal: Is Now the Right Time to Buy?",
-    summary: "Silver is trading at NPR 2,285 per tola in Nepal, up 12% year-to-date. Experts weigh in on the industrial demand outlook and whether silver presents value against gold at current ratios.",
+    summary: "Silver is trading at NPR 3,250 per tola in Nepal, up 18% year-to-date. Experts weigh in on the industrial demand outlook and whether silver presents value against gold at current ratios.",
     date: "2026-06-13",
     category: "Analysis",
     readTime: "6 min read",
