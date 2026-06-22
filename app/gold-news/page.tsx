@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Gold News Nepal — Latest Gold Market Updates & Analysis",
   description:
     "Stay updated with the latest gold price news in Nepal. FENEGOSIDA announcements, market analysis, Nepal gold import policy, and investment insights.",
-  alternates: { canonical: "https://www.goldpricenep.com/gold-news" },
+  alternates: { canonical: "https://www.goldpricenepal.online/gold-news" },
 };
 
 const CATEGORY_COLORS: Record<string, "gold" | "success" | "secondary" | "default"> = {

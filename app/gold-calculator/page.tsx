@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Gold Calculator Nepal — 24K, 22K, 18K Price per Tola, Gram, Ounce",
   description:
     "Free Nepal gold price calculator. Convert grams, tola, and ounces to NPR for 24K, 22K, and 18K gold. Live rates from FENEGOSIDA.",
-  alternates: { canonical: "https://www.goldpricenep.com/gold-calculator" },
+  alternates: { canonical: "https://www.goldpricenepal.online/gold-calculator" },
 };
 
 const COMMON_WEIGHTS = [

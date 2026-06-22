@@ -27,8 +27,8 @@ export default function Header() {
               <TrendingUp className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
             <div className="leading-tight">
-              <span className="font-bold text-white text-lg tracking-tight">GoldPriceNep</span>
-              <span className="text-gold-400 font-bold text-lg">.com</span>
+              <span className="font-bold text-white text-lg tracking-tight">GoldPriceNepal</span>
+              <span className="text-gold-400 font-bold text-lg">.online</span>
             </div>
           </Link>
 

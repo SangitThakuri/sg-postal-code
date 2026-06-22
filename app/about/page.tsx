@@ -3,10 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ShieldCheck, Zap, Globe, BarChart3 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About GoldPriceNep.com — Nepal's Live Gold Price Website",
+  title: "About GoldPriceNepalal.online — Nepal's Live Gold Price Website",
   description:
-    "Learn about GoldPriceNep.com — Nepal's trusted source for live gold prices, 24K/22K/18K rates, gold calculators, and market news.",
-  alternates: { canonical: "https://www.goldpricenep.com/about" },
+    "Learn about GoldPriceNepalal.online — Nepal's trusted source for live gold prices, 24K/22K/18K rates, gold calculators, and market news.",
+  alternates: { canonical: "https://www.goldpricenepal.online/about" },
 };
 
 export default function AboutPage() {
@@ -14,9 +14,9 @@ export default function AboutPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
       {/* Hero */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">About GoldPriceNep.com</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">About GoldPriceNepalal.online</h1>
         <p className="text-gray-500 leading-relaxed max-w-2xl mx-auto">
-          GoldPriceNep.com is Nepal&apos;s dedicated platform for live gold prices, historical charts,
+          GoldPriceNepalal.online is Nepal&apos;s dedicated platform for live gold prices, historical charts,
           gold calculators, and market insights — designed specifically for Nepali consumers, investors,
           and jewellers.
         </p>
@@ -32,7 +32,7 @@ export default function AboutPage() {
             average Nepali consumer.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            GoldPriceNep.com bridges that gap by providing transparent, timely, and accurate gold rate
+            GoldPriceNepalal.online bridges that gap by providing transparent, timely, and accurate gold rate
             information. We pull data from FENEGOSIDA&apos;s daily announcements and international
             spot markets to give you the most reliable price information available.
           </p>
@@ -88,10 +88,10 @@ export default function AboutPage() {
         <CardContent className="p-6">
           <h3 className="font-semibold text-amber-900 mb-2">Disclaimer</h3>
           <p className="text-sm text-amber-800 leading-relaxed">
-            The prices shown on GoldPriceNep.com are for informational purposes only. While we
+            The prices shown on GoldPriceNepalal.online are for informational purposes only. While we
             strive for accuracy, prices may differ from those quoted by your local jeweller or bank
             due to making charges, taxes, and dealer margins. Always verify the current rate with a
-            licensed gold dealer before any transaction. GoldPriceNep.com is not responsible for
+            licensed gold dealer before any transaction. GoldPriceNepalal.online is not responsible for
             any financial decisions made based on the information provided on this website.
           </p>
         </CardContent>
@@ -104,7 +104,7 @@ export default function AboutPage() {
           <p className="text-gray-500 text-sm">
             For feedback, data corrections, advertising inquiries, or partnership opportunities,
             please reach out via our contact form or email us at{" "}
-            <span className="font-medium text-gray-700">contact@goldpricenep.com</span>.
+            <span className="font-medium text-gray-700">contact@goldpricenepal.online</span>.
           </p>
         </CardContent>
       </Card>

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://www.goldpricenep.com";
+const BASE_URL = "https://www.goldpricenepal.online";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

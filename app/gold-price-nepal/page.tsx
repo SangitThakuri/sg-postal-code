@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Gold Price Nepal Today — 24K, 22K, 18K per Tola & Gram",
   description:
     "Today's gold price in Nepal: 24K, 22K, 18K per tola, gram, and ounce in NPR. Historical chart, price table, and FENEGOSIDA daily rates. Suna ko bhaau Nepal.",
-  alternates: { canonical: "https://www.goldpricenep.com/gold-price-nepal" },
+  alternates: { canonical: "https://www.goldpricenepal.online/gold-price-nepal" },
 };
 
 const UNITS = [
@@ -24,7 +24,7 @@ const UNITS = [
   { label: "Per KG", gram: 1000 },
 ];
 
-export default function GoldPriceNepalPage() {
+export default function GoldPriceNepalalPage() {
   const p = MOCK_GOLD_PRICE;
   const basePerGram = p.price_24k_gram;
 

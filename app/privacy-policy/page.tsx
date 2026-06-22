@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — GoldPriceNep.com",
-  description: "Privacy policy for GoldPriceNep.com — how we collect, use, and protect your data.",
+  title: "Privacy Policy — GoldPriceNepalal.online",
+  description: "Privacy policy for GoldPriceNepalal.online — how we collect, use, and protect your data.",
   robots: { index: false },
 };
 
 const SECTIONS = [
   {
     title: "1. Information We Collect",
-    content: `We may collect the following information when you use GoldPriceNep.com:
+    content: `We may collect the following information when you use GoldPriceNepalal.online:
 
 • Usage data: pages visited, time on site, referring URLs (collected automatically via analytics)
 • Device data: browser type, operating system, screen size, IP address (anonymised)
@@ -31,7 +31,7 @@ We do not collect personally identifiable financial information.`,
   },
   {
     title: "3. Cookies",
-    content: `GoldPriceNep.com uses cookies to:
+    content: `GoldPriceNepalal.online uses cookies to:
 
 • Remember your calculator preferences
 • Measure site traffic via Google Analytics (anonymised IP)
@@ -61,7 +61,7 @@ We use Google Analytics to understand aggregate traffic patterns. All data is an
 • Unsubscribe from email alerts at any time
 • Opt out of analytics tracking
 
-To exercise these rights, contact us at contact@goldpricenep.com.`,
+To exercise these rights, contact us at contact@goldpricenepal.online.`,
   },
   {
     title: "8. Changes to This Policy",
@@ -83,10 +83,10 @@ export default function PrivacyPolicyPage() {
       <Card className="mb-6">
         <CardContent className="p-6">
           <p className="text-gray-600 text-sm leading-relaxed">
-            GoldPriceNep.com (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting
+            GoldPriceNepalal.online (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting
             your privacy. This policy explains what information we collect, how we use it, and the choices
             you have regarding your data when using our website at{" "}
-            <strong>www.goldpricenep.com</strong>.
+            <strong>www.goldpricenepal.online</strong>.
           </p>
         </CardContent>
       </Card>
@@ -107,7 +107,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="font-bold text-gray-900 mb-2">Contact Us</h2>
           <p className="text-sm text-gray-600">
             For privacy-related questions or requests, contact us at:{" "}
-            <span className="font-medium text-gray-900">contact@goldpricenep.com</span>
+            <span className="font-medium text-gray-900">contact@goldpricenepal.online</span>
           </p>
         </CardContent>
       </Card>

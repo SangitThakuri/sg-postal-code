@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Gold Price Nepal Today | Live Gold Rate Calculator",
   description:
     "Check today's gold price in Nepal, live gold rate, 24K and 22K gold calculator. Get gold price per tola, gram, and ounce in NPR. Updated daily by FENEGOSIDA.",
-  alternates: { canonical: "https://www.goldpricenep.com" },
+  alternates: { canonical: "https://www.goldpricenepal.online" },
 };
 
 const FEATURES = [
@@ -92,7 +92,7 @@ export default function HomePage() {
         {/* Features */}
         <section>
           <h2 className="text-xl font-bold text-gray-900 mb-6">
-            Why Use GoldPriceNep.com?
+            Why Use GoldPriceNepalal.online?
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {FEATURES.map(({ icon: Icon, title, desc }) => (

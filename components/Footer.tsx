@@ -26,7 +26,7 @@ export default function Footer() {
                 <TrendingUp className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <span className="font-bold text-white text-lg">
-                GoldPriceNep<span className="text-gold-400">.com</span>
+                GoldPriceNepal<span className="text-gold-400">.online</span>
               </span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
@@ -82,7 +82,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-slate-500 text-xs">
-            © {year} GoldPriceNep.com. All rights reserved.
+            © {year} GoldPriceNepal.online. All rights reserved.
           </p>
           <p className="text-slate-600 text-xs">
             Prices in NPR · Updated daily
