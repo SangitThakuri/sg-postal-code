@@ -1,0 +1,93 @@
+---
+import { GOLD_PRICE, WEEKLY_HISTORY } from '../lib/gold-data';
+
+const price = GOLD_PRICE;
+---
+
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Today's Gold Rates in Nepal</h2>
+
+    <!-- Today's rates table -->
+    <div class="overflow-x-auto rounded-xl border border-gray-200 mb-10">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold text-gray-700">Purity</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">Per Tola (NPR)</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">Per Gram (NPR)</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">Per Oz (NPR)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {[
+            {
+              purity: '24K (Fine Gold)',
+              tola: price.price_24k_tola,
+              gram: price.price_24k_gram,
+              oz: Math.round(price.price_24k_gram * 31.1035),
+              highlight: true,
+            },
+            {
+              purity: '22K (Hallmark)',
+              tola: price.price_22k_tola,
+              gram: price.price_22k_gram,
+              oz: Math.round(price.price_22k_gram * 31.1035),
+              highlight: false,
+            },
+            {
+              purity: '18K (Jewellery)',
+              tola: price.price_18k_tola,
+              gram: price.price_18k_gram,
+              oz: Math.round(price.price_18k_gram * 31.1035),
+              highlight: false,
+            },
+          ].map((row) => (
+            <tr class={row.highlight ? 'bg-yellow-50' : 'hover:bg-gray-50'}>
+              <td class="px-4 py-3 font-medium text-gray-900">
+                {row.purity}
+                {row.highlight && <span class="ml-2 text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">Today</span>}
+              </td>
+              <td class="px-4 py-3 text-right font-bold text-gray-900">
+                {row.tola.toLocaleString('en-NP')}
+              </td>
+              <td class="px-4 py-3 text-right text-gray-700">
+                {row.gram.toLocaleString('en-NP')}
+              </td>
+              <td class="px-4 py-3 text-right text-gray-700">
+                {row.oz.toLocaleString('en-NP')}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Weekly history -->
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">7-Day Gold Price History</h2>
+    <div class="overflow-x-auto rounded-xl border border-gray-200">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold text-gray-700">Day</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">24K / Tola (NPR)</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">22K / Tola (NPR)</th>
+            <th class="px-4 py-3 text-right font-semibold text-gray-700">Change</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {WEEKLY_HISTORY.map((row) => (
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 font-medium text-gray-900">{row.day}</td>
+              <td class="px-4 py-3 text-right text-gray-900">{row.price_24k.toLocaleString('en-NP')}</td>
+              <td class="px-4 py-3 text-right text-gray-700">{row.price_22k.toLocaleString('en-NP')}</td>
+              <td class={`px-4 py-3 text-right font-medium ${row.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {row.change >= 0 ? '+' : ''}{row.change}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

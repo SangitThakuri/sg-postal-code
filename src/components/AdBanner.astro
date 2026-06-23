@@ -1,0 +1,15 @@
+---
+interface Props {
+  slot?: string;
+  className?: string;
+}
+
+const { slot: adSlot = 'banner', className = '' } = Astro.props;
+---
+
+<div class={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-400 text-sm ${className}`}>
+  <p class="font-medium">Advertisement</p>
+  <p class="text-xs mt-1">AdSense slot: {adSlot}</p>
+  <!-- Google AdSense: Replace with actual ad code -->
+  <!-- <ins class="adsbygoogle" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot={adSlot}></ins> -->
+</div>

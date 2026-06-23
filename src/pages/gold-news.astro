@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AdBanner from '../components/AdBanner.astro';
+
+const articles = [
+  {
+    title: 'Nepal Gold Price Rises by NPR 1,800 — Tracks International Rally',
+    date: 'June 22, 2025',
+    category: 'Market Update',
+    excerpt: 'FENEGOSIDA raised today\'s gold rate by NPR 1,800 per tola, bringing 24K to NPR 287,300. The increase mirrors a rally in international spot gold prices driven by Fed rate expectations.',
+    slug: '#',
+  },
+  {
+    title: 'Gold Demand Surges Ahead of Dashain 2025',
+    date: 'June 20, 2025',
+    category: 'Seasonal',
+    excerpt: 'Jewellery retailers across Kathmandu report a 35% increase in footfall as shoppers prepare for the Dashain festival. Traders expect demand to remain elevated through mid-October.',
+    slug: '#',
+  },
+  {
+    title: 'USD/NPR Rate Hits 137.50 — Impact on Domestic Gold Prices',
+    date: 'June 18, 2025',
+    category: 'Currency',
+    excerpt: 'The Nepali rupee has weakened against the dollar, now trading at 137.50 per USD. This depreciation adds upward pressure on local gold prices even when international rates stay flat.',
+    slug: '#',
+  },
+  {
+    title: 'Silver Outpaces Gold in June — Up 1.4% for the Week',
+    date: 'June 16, 2025',
+    category: 'Silver',
+    excerpt: 'Silver prices in Nepal rose to NPR 3,250 per tola this week, outperforming gold on a percentage basis. Industrial demand and solar panel production are cited as key drivers.',
+    slug: '#',
+  },
+  {
+    title: 'FENEGOSIDA Introduces New Hallmarking Guidelines for 2025',
+    date: 'June 10, 2025',
+    category: 'Regulation',
+    excerpt: 'Nepal\'s gold dealers federation has announced updated hallmarking standards effective July 2025, requiring all 22K jewellery to carry third-party certification from approved labs.',
+    slug: '#',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Gold News Nepal',
+  url: 'https://www.goldpricenepal.online/gold-news',
+  description: 'Latest gold price news, market updates, and analysis for Nepal.',
+};
+---
+
+<BaseLayout
+  title="Gold News Nepal 2025 | Latest Gold Market Updates | GoldPriceNepal.online"
+  description="Stay updated with the latest gold price news in Nepal. Market analysis, FENEGOSIDA announcements, international gold trends affecting Nepal's gold market."
+  canonical="https://www.goldpricenepal.online/gold-news"
+  schema={schema}
+>
+  <div class="py-12 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          Gold News <span class="text-yellow-600">Nepal</span>
+        </h1>
+        <p class="text-gray-600">Latest market updates, price analysis, and gold industry news.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Articles -->
+        <div class="lg:col-span-2 space-y-6">
+          {articles.map((article) => (
+            <article class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-xs bg-yellow-100 text-yellow-800 font-medium px-2 py-0.5 rounded-full">
+                  {article.category}
+                </span>
+                <span class="text-xs text-gray-400">{article.date}</span>
+              </div>
+              <h2 class="text-lg font-bold text-gray-900 mb-2 hover:text-yellow-700 cursor-pointer">
+                <a href={article.slug}>{article.title}</a>
+              </h2>
+              <p class="text-gray-600 text-sm leading-relaxed">{article.excerpt}</p>
+              <a
+                href={article.slug}
+                class="inline-flex items-center mt-3 text-yellow-600 hover:text-yellow-700 text-sm font-medium"
+              >
+                Read more →
+              </a>
+            </article>
+          ))}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="space-y-6">
+          <AdBanner slot="sidebar-1" />
+
+          <!-- Email alert CTA -->
+          <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl p-6 text-white">
+            <h3 class="font-bold text-lg mb-2">📧 Daily Gold Price Alert</h3>
+            <p class="text-yellow-100 text-sm mb-4">
+              Get today's gold rate delivered to your inbox every morning.
+            </p>
+            <form class="space-y-3">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                class="w-full px-3 py-2 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+              />
+              <button
+                type="submit"
+                class="w-full bg-white text-yellow-700 font-semibold py-2 rounded-lg text-sm hover:bg-yellow-50 transition-colors"
+              >
+                Subscribe Free
+              </button>
+            </form>
+          </div>
+
+          <AdBanner slot="sidebar-2" />
+        </aside>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

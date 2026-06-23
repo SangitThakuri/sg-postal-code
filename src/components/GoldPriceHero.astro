@@ -1,0 +1,65 @@
+---
+import { GOLD_PRICE, formatNPR, formatUSD, formatPercent } from '../lib/gold-data';
+import { formatNPR as fmtNPR, formatPercent as fmtPct } from '../lib/utils';
+
+const price = GOLD_PRICE;
+const isPositive = price.change_percent >= 0;
+const lastUpdated = new Date(price.last_updated).toLocaleString('en-NP', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+---
+
+<section class="bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 text-white py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <h1 class="text-4xl md:text-5xl font-bold mb-3">
+        Gold Price in <span class="text-yellow-400">Nepal</span> Today
+      </h1>
+      <p class="text-gray-300 text-lg">
+        Live rates from FENEGOSIDA &mdash; Updated {lastUpdated}
+      </p>
+    </div>
+
+    <!-- Main price card -->
+    <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 max-w-2xl mx-auto text-center mb-10">
+      <p class="text-yellow-400 text-sm font-medium uppercase tracking-wider mb-2">24K Gold per Tola</p>
+      <div class="text-5xl md:text-6xl font-bold mb-3">
+        NPR {price.price_24k_tola.toLocaleString('en-NP')}
+      </div>
+      <div class={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+        isPositive ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'
+      }`}>
+        <span>{isPositive ? '▲' : '▼'}</span>
+        <span>NPR {Math.abs(price.change_amount).toLocaleString('en-NP')} ({isPositive ? '+' : ''}{price.change_percent.toFixed(2)}%)</span>
+      </div>
+      <div class="mt-4 flex justify-center gap-6 text-sm text-gray-300">
+        <span>H: NPR {price.high_24h.toLocaleString('en-NP')}</span>
+        <span>L: NPR {price.low_24h.toLocaleString('en-NP')}</span>
+        <span>USD: ${price.price_usd_per_oz.toLocaleString()}/oz</span>
+      </div>
+    </div>
+
+    <!-- Price grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+      {[
+        { label: '24K / Tola', value: price.price_24k_tola },
+        { label: '22K / Tola', value: price.price_22k_tola },
+        { label: '18K / Tola', value: price.price_18k_tola },
+        { label: '24K / Gram', value: price.price_24k_gram },
+        { label: '22K / Gram', value: price.price_22k_gram },
+        { label: '18K / Gram', value: price.price_18k_gram },
+      ].map((item) => (
+        <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+          <p class="text-gray-400 text-xs mb-1">{item.label}</p>
+          <p class="text-white font-bold text-lg">NPR {item.value.toLocaleString('en-NP')}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- USD/NPR Rate -->
+    <div class="mt-6 text-center text-sm text-gray-400">
+      1 USD = NPR {price.usd_npr_rate.toFixed(2)} &bull; 1 Tola = 11.6638 grams
+    </div>
+  </div>
+</section>

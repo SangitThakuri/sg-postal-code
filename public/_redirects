@@ -1,0 +1,2 @@
+# Redirect non-www to www
+http://goldpricenepal.online/* https://www.goldpricenepal.online/:splat 301!

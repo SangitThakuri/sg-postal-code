@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GoldPriceHero from '../components/GoldPriceHero.astro';
+import GoldRatesTable from '../components/GoldRatesTable.astro';
+import SilverPriceCard from '../components/SilverPriceCard.astro';
+import AdBanner from '../components/AdBanner.astro';
+import GoldChart from '../components/GoldChart';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Gold Price in Nepal Today 2025',
+  description: 'Live 24K, 22K, 18K gold rates per tola and gram in Nepal, updated daily.',
+  url: 'https://www.goldpricenepal.online/gold-price-nepal',
+  publisher: {
+    '@type': 'Organization',
+    name: 'GoldPriceNepal.online',
+    url: 'https://www.goldpricenepal.online',
+  },
+};
+---
+
+<BaseLayout
+  title="Gold Price in Nepal Today 2025 | 24K 22K 18K Rates | GoldPriceNepal.online"
+  description="Live gold price in Nepal today. 24K gold at NPR 287,300 per tola. Complete rates for 22K and 18K per tola and gram. Daily updates from FENEGOSIDA."
+  canonical="https://www.goldpricenepal.online/gold-price-nepal"
+  schema={schema}
+>
+  <GoldPriceHero />
+
+  <GoldRatesTable />
+
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <GoldChart client:only="react" />
+    </div>
+  </section>
+
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <SilverPriceCard />
+      <AdBanner slot="sidebar" />
+    </div>
+  </section>
+
+  <!-- FAQ Schema -->
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {[
+          {
+            q: 'What is the gold price in Nepal today?',
+            a: 'Today\'s gold price in Nepal is NPR 287,300 per tola for 24K fine gold, as set by FENEGOSIDA.',
+          },
+          {
+            q: 'How is gold measured in Nepal?',
+            a: 'Gold in Nepal is primarily measured in tola (1 tola = 11.6638 grams). Grams are also used.',
+          },
+          {
+            q: 'Who sets gold prices in Nepal?',
+            a: 'FENEGOSIDA (Federation of Nepal Gold & Silver Dealers Associations) sets the official daily gold rate.',
+          },
+          {
+            q: 'What is the difference between 24K, 22K, and 18K gold?',
+            a: '24K is 99.9% pure gold. 22K is 91.6% gold (used for hallmark jewellery). 18K is 75% gold (commonly used in jewellery).',
+          },
+        ].map((item) => (
+          <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <h3 class="font-semibold text-gray-900 mb-2">{item.q}</h3>
+            <p class="text-gray-600 text-sm">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

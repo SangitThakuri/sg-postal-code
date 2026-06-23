@@ -1,0 +1,32 @@
+---
+import { GOLD_PRICE } from '../lib/gold-data';
+
+const price = GOLD_PRICE;
+const isPositive = price.silver_change_percent >= 0;
+---
+
+<div class="bg-gradient-to-br from-slate-700 to-slate-800 text-white rounded-2xl p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-bold flex items-center gap-2">
+      <span class="text-2xl">🥈</span> Silver Price Nepal
+    </h3>
+    <div class={`text-xs px-2 py-1 rounded-full ${isPositive ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'}`}>
+      {isPositive ? '▲' : '▼'} {price.silver_change_percent.toFixed(2)}%
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <p class="text-slate-400 text-xs mb-1">Per Tola</p>
+      <p class="text-2xl font-bold">NPR {price.silver_per_tola.toLocaleString('en-NP')}</p>
+    </div>
+    <div>
+      <p class="text-slate-400 text-xs mb-1">Per Gram</p>
+      <p class="text-2xl font-bold">NPR {price.silver_per_gram.toLocaleString('en-NP')}</p>
+    </div>
+  </div>
+
+  <div class="mt-3 text-slate-400 text-xs">
+    Change: {isPositive ? '+' : ''}{price.silver_change_amount} NPR today
+  </div>
+</div>

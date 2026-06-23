@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GoldCalculator from '../components/GoldCalculator';
+import CurrencyConverter from '../components/CurrencyConverter';
+import AdBanner from '../components/AdBanner.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Nepal Gold Price Calculator',
+  url: 'https://www.goldpricenepal.online/gold-calculator',
+  applicationCategory: 'FinanceApplication',
+  description: 'Calculate the value of gold in Nepal in NPR. Enter weight in grams, tola, or ounces.',
+};
+---
+
+<BaseLayout
+  title="Gold Calculator Nepal | Calculate Gold Value in NPR | GoldPriceNepal.online"
+  description="Free Nepal gold calculator. Enter weight in grams, tola, or ounces to get the value in NPR for 24K, 22K, and 18K gold. Also includes USD/NPR currency converter."
+  canonical="https://www.goldpricenepal.online/gold-calculator"
+  schema={schema}
+>
+  <div class="bg-gradient-to-b from-yellow-50 to-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          Gold Price Calculator <span class="text-yellow-600">Nepal</span>
+        </h1>
+        <p class="text-gray-600 max-w-xl mx-auto">
+          Enter the weight of your gold in grams, tola, or troy ounces to calculate its current market value in NPR.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <GoldCalculator client:load />
+        <CurrencyConverter client:load />
+      </div>
+
+      <AdBanner slot="calculator-banner" className="mt-10 max-w-4xl mx-auto" />
+
+      <!-- How to use -->
+      <div class="mt-12 max-w-3xl mx-auto">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">How to Use the Gold Calculator</h2>
+        <ol class="space-y-3 text-gray-600 list-decimal list-inside">
+          <li>Enter the weight of your gold in the input field.</li>
+          <li>Select the unit: grams, tola, or troy ounces.</li>
+          <li>The calculator instantly shows the value for 24K, 22K, and 18K gold.</li>
+          <li>All prices are based on today's FENEGOSIDA-approved rates.</li>
+        </ol>
+
+        <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <h3 class="font-semibold text-yellow-800 mb-2">Conversion Reference</h3>
+          <ul class="text-sm text-yellow-700 space-y-1">
+            <li>1 Tola = 11.6638 grams</li>
+            <li>1 Troy Ounce = 31.1035 grams</li>
+            <li>1 Troy Ounce = 2.666 tola</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

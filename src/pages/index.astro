@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GoldPriceHero from '../components/GoldPriceHero.astro';
+import GoldRatesTable from '../components/GoldRatesTable.astro';
+import SilverPriceCard from '../components/SilverPriceCard.astro';
+import AdBanner from '../components/AdBanner.astro';
+import GoldChart from '../components/GoldChart';
+import GoldCalculator from '../components/GoldCalculator';
+import CurrencyConverter from '../components/CurrencyConverter';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Gold Price in Nepal Today',
+  description: 'Live gold price in Nepal today. Check 24K, 22K, 18K gold rates per tola and gram in NPR.',
+  url: 'https://www.goldpricenepal.online',
+};
+---
+
+<BaseLayout
+  title="Gold Price Nepal Today 2025 | Live 24K 22K Rates in NPR | GoldPriceNepal.online"
+  description="Today's live gold price in Nepal. Check 24K gold at NPR 287,300/tola, 22K and 18K rates per gram and tola. Updated daily from FENEGOSIDA."
+  canonical="https://www.goldpricenepal.online"
+  schema={schema}
+>
+  <GoldPriceHero />
+
+  <AdBanner slot="top-banner" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8" />
+
+  <GoldRatesTable />
+
+  <!-- Chart + Calculator + Converter -->
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10">
+        <GoldChart client:only="react" />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <GoldCalculator client:load />
+        <div class="space-y-6">
+          <CurrencyConverter client:load />
+          <SilverPriceCard />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info section -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">About Gold Prices in Nepal</h2>
+        <div class="prose text-gray-600 space-y-3">
+          <p>
+            Gold prices in Nepal are set daily by FENEGOSIDA (Federation of Nepal Gold &amp; Silver Dealers Associations).
+            The rate is influenced by international gold prices in USD and the USD/NPR exchange rate set by Nepal Rastra Bank.
+          </p>
+          <p>
+            Nepal uses the <strong>tola</strong> as its primary unit for gold measurement. One tola equals 11.6638 grams.
+            The most commonly traded purities are 24K (fine gold), 22K (hallmark), and 18K (commonly used in jewellery).
+          </p>
+          <p>
+            Gold is considered an auspicious metal in Nepali culture and is widely purchased during festivals like
+            Dashain, Tihar, and Teej, as well as for weddings and other ceremonies.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AdBanner slot="bottom-banner" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8" />
+</BaseLayout>
