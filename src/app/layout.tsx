@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GhPagesRedirect from "@/components/GhPagesRedirect";
 
 const isGhPages = process.env.NEXT_PUBLIC_GITHUB_PAGES === "true";
+const GA_MEASUREMENT_ID = "G-Z5DXN1WGDV";
 
 export const metadata: Metadata = {
   title: {
@@ -55,6 +57,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-SG">
+      <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+      </head>
       <body className="min-h-screen flex flex-col">
         {isGhPages && <GhPagesRedirect />}
         <Header />
