@@ -1,0 +1,38 @@
+name: Refresh D1 Postal Data
+
+on:
+  schedule:
+    # Weekly — the upstream dataset doesn't change daily; matches the
+    # download-data.js 24h freshness check without hammering D1 needlessly.
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    name: Download, Regenerate Seed, Apply to D1
+    runs-on: ubuntu-latest
+    if: secrets.CLOUDFLARE_API_TOKEN != ''
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Force-refresh Singapore buildings data
+        run: rm -f public/data/buildings.json && node scripts/download-data.js
+
+      - name: Generate D1 seed files
+        run: npm run d1:generate-seed
+
+      - name: Apply migrations + seed remote D1
+        run: npm run d1:seed:remote

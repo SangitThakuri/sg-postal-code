@@ -6,6 +6,13 @@ export const alt = "Singapore Postal Code Details";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// No generateStaticParams here: this file is deleted entirely for the
+// GitHub Pages static-export build (see prepare-ghpages.js — Next.js can't
+// resolve generateStaticParams for dynamic metadata-image routes there
+// anyway). For the SSR/Cloudflare build it must stay fully dynamic, since
+// D1 (via getCloudflareContext) is only reachable at Worker request time,
+// not during `next build` — a non-empty generateStaticParams would try to
+// pre-render this at build time and fail.
 export default async function Image({
   params,
 }: {

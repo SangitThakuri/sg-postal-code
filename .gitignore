@@ -29,6 +29,13 @@ next-env.d.ts
 # data (generated at build time — buildings.json IS tracked in git)
 /public/data/sectors/
 /public/data/search-index.json
+/d1-seed/
+
+# cloudflare / opennext
+/.open-next/
+/.wrangler/
+/cloudflare-env.d.ts
+.dev.vars
 
 # macOS
 .DS_Store

@@ -10,6 +10,10 @@
  *  3. Removes src/app/api/ — not needed; sector JSON files serve the data.
  *  4. Removes src/app/sitemap-index/ — returns a 301 redirect which is
  *     not supported by static export.
+ *  5. Removes postal/[code]/opengraph-image.tsx — Next.js 14.2's static
+ *     export can't resolve generateStaticParams for dynamic metadata-image
+ *     routes (fails even with a non-empty return); Vercel's SSR build still
+ *     serves it normally since this file is untouched there.
  */
 
 const fs = require("fs");
@@ -56,15 +60,31 @@ if (fs.existsSync(sitemapIndexDir)) {
   console.log("prepare-ghpages: removed src/app/sitemap-index/ (redirect not supported in static export)");
 }
 
+// ── 5. Remove postal/[code]/opengraph-image.tsx ─────────────────────────────
+const ogImageFile = path.join(postalDir, "opengraph-image.tsx");
+if (fs.existsSync(ogImageFile)) {
+  fs.rmSync(ogImageFile);
+  console.log("prepare-ghpages: removed postal/[code]/opengraph-image.tsx (incompatible with static export)");
+}
+
 console.log("prepare-ghpages: all steps complete.");
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 function verify(filePath, label) {
   const content = fs.readFileSync(filePath, "utf-8");
 
-  if (!content.includes("generateStaticParams") && label === "postal page") {
-    console.error(`Verification failed [${label}]: generateStaticParams not found.`);
-    process.exit(1);
+  if (label === "postal page") {
+    if (!content.includes("generateStaticParams")) {
+      console.error(`Verification failed [${label}]: generateStaticParams not found.`);
+      process.exit(1);
+    }
+    // An empty array here builds locally but Next 14.2's output:"export"
+    // treats it as "not implemented" and hard-fails (checks
+    // prerenderRoutes.length, not whether the function exists).
+    if (/generateStaticParams[\s\S]*?return\s*\[\s*\]/.test(content)) {
+      console.error(`Verification failed [${label}]: generateStaticParams returns an empty array, which output:"export" rejects. Return at least one real param.`);
+      process.exit(1);
+    }
   }
 
   // Detect "use client" as a standalone directive line (not inside a comment)

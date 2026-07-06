@@ -13,13 +13,16 @@ const PAGES = [
   { url: `${BASE}/cookie-policy`, priority: "0.3", changefreq: "monthly" },
 ];
 
-export async function GET() {
-  const today = new Date().toISOString().split("T")[0];
+// Fixed date for these static pages — bump only when their content actually
+// changes. Recomputing `new Date()` per-request made lastmod tick forward
+// daily even though nothing changed, which erodes Google's trust in it.
+const STATIC_PAGES_LASTMOD = "2026-07-06";
 
+export async function GET() {
   const urls = PAGES.map(
     (p) => `  <url>
     <loc>${p.url}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${STATIC_PAGES_LASTMOD}</lastmod>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`

@@ -1,18 +1,42 @@
 import { NextResponse } from "next/server";
-import { createReadStream } from "fs";
-import { join } from "path";
-import { Readable } from "stream";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
+// Raw full-dataset dump. Not called anywhere in this app's own UI — kept for
+// any external consumer of the old file-based endpoint. Previously streamed
+// buildings.json straight off disk via fs; that file isn't bundled into the
+// Worker (see src/lib/data.ts), so this now reconstructs the same shape from D1.
 export async function GET() {
-  const filePath = join(process.cwd(), "public", "data", "buildings.json");
-
   try {
-    const fileStream = createReadStream(filePath);
-    const webStream = Readable.toWeb(fileStream) as ReadableStream;
+    const { env } = await getCloudflareContext({ async: true });
+    const { results } = await env.DB.prepare(
+      "SELECT postal, building, address, road_name, blk_no, searchval, latitude, longitude FROM buildings"
+    ).all<{
+      postal: string;
+      building: string;
+      address: string;
+      road_name: string;
+      blk_no: string;
+      searchval: string;
+      latitude: number;
+      longitude: number;
+    }>();
 
-    return new NextResponse(webStream, {
+    const buildings = results.map((r) => ({
+      ADDRESS: r.address,
+      BLK_NO: r.blk_no,
+      BUILDING: r.building,
+      LATITUDE: String(r.latitude),
+      LONGITUDE: String(r.longitude),
+      LONGTITUDE: String(r.longitude),
+      POSTAL: r.postal,
+      ROAD_NAME: r.road_name,
+      SEARCHVAL: r.searchval,
+      X: "",
+      Y: "",
+    }));
+
+    return NextResponse.json(buildings, {
       headers: {
-        "Content-Type": "application/json; charset=utf-8",
         "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=3600",
         "Access-Control-Allow-Origin": "*",
       },

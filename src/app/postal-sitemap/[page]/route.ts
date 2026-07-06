@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllPostalCodes } from "@/lib/data";
+import { getAllPostalCodes, getDataLastModified } from "@/lib/data";
 
 const BASE = "https://www.sgpostalcode.com";
 const BATCH = 40000;
 
-// Required for Next.js static export: tells the build which pages to pre-generate.
-export async function generateStaticParams() {
-  const postals = await getAllPostalCodes();
-  const batches = Math.ceil(postals.length / BATCH);
-  return Array.from({ length: batches }, (_, i) => ({ page: String(i + 1) }));
-}
-
+// No generateStaticParams: D1 (via getCloudflareContext) is only reachable
+// at Worker request time, not during `next build`, so this stays a fully
+// dynamic route rendered on demand.
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ page: string }> }) {
   const { page: pageStr } = await params;
   const page = parseInt(pageStr, 10);
@@ -27,11 +23,12 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ pag
     return new NextResponse("Not Found", { status: 404 });
   }
 
+  const lastmod = await getDataLastModified();
   const urls = batch
     .map(
       (p) => `  <url>
     <loc>${BASE}/postal/${p}</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`

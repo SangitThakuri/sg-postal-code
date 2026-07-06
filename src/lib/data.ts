@@ -1,36 +1,56 @@
-import fs from "fs";
-import path from "path";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Building, PostalGroup, SearchResult } from "./types";
 export { SG_DISTRICTS, getDistrictByPostal, classifyBuilding, getRegionByPostal } from "./data-utils";
 
-const DATA_URL =
-  "https://raw.githubusercontent.com/xkjyeah/singapore-postal-codes/refs/heads/master/buildings.json";
-
-// Module-level singleton — parsed once per server process lifetime
-let _buildingsCache: Building[] | null = null;
-
-async function fetchFromUrl(): Promise<Building[]> {
-  const res = await fetch(DATA_URL, { next: { revalidate: 86400 } });
-  if (!res.ok) throw new Error("Failed to fetch buildings data");
-  return res.json();
+interface BuildingRow {
+  postal: string;
+  building: string;
+  address: string;
+  road_name: string;
+  blk_no: string;
+  searchval: string;
+  latitude: number;
+  longitude: number;
 }
 
-export async function getAllBuildings(): Promise<Building[]> {
-  if (_buildingsCache) return _buildingsCache;
+async function getDB() {
+  const { env } = await getCloudflareContext({ async: true });
+  return env.DB;
+}
 
-  const filePath = path.join(process.cwd(), "public/data/buildings.json");
-  if (fs.existsSync(filePath)) {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    _buildingsCache = JSON.parse(raw) as Building[];
-  } else {
-    _buildingsCache = await fetchFromUrl();
-  }
-  return _buildingsCache;
+function rowToBuilding(row: BuildingRow): Building {
+  return {
+    ADDRESS: row.address,
+    BLK_NO: row.blk_no,
+    BUILDING: row.building,
+    LATITUDE: String(row.latitude),
+    LONGITUDE: String(row.longitude),
+    LONGTITUDE: String(row.longitude),
+    POSTAL: row.postal,
+    ROAD_NAME: row.road_name,
+    SEARCHVAL: row.searchval,
+    X: "",
+    Y: "",
+  };
+}
+
+let _dataLastModified: string | null = null;
+
+export async function getDataLastModified(): Promise<string> {
+  if (_dataLastModified) return _dataLastModified;
+  const db = await getDB();
+  const row = await db.prepare("SELECT value FROM meta WHERE key = 'data_last_modified'").first<{ value: string }>();
+  _dataLastModified = row?.value ?? new Date().toISOString().split("T")[0];
+  return _dataLastModified;
 }
 
 export async function getBuildingsByPostal(postal: string): Promise<Building[]> {
-  const all = await getAllBuildings();
-  return all.filter((b) => b.POSTAL === postal);
+  const db = await getDB();
+  const { results } = await db
+    .prepare("SELECT * FROM buildings WHERE postal = ?")
+    .bind(postal)
+    .all<BuildingRow>();
+  return results.map(rowToBuilding);
 }
 
 export async function getPostalGroup(postal: string): Promise<PostalGroup | null> {
@@ -54,48 +74,45 @@ export async function searchBuildings(
   const q = query.toLowerCase().trim();
   if (!q) return [];
 
-  const all = await getAllBuildings();
-  const seen = new Set<string>();
-  const results: SearchResult[] = [];
+  const db = await getDB();
+  const { results } = await db
+    .prepare(
+      `SELECT DISTINCT postal, building, address, road_name, blk_no, searchval, latitude, longitude
+       FROM buildings
+       WHERE postal LIKE ?1
+          OR LOWER(building) LIKE ?2
+          OR LOWER(road_name) LIKE ?2
+          OR LOWER(address) LIKE ?2
+          OR LOWER(searchval) LIKE ?2
+       LIMIT ?3`
+    )
+    .bind(`${q}%`, `%${q}%`, limit)
+    .all<BuildingRow>();
 
-  for (const b of all) {
-    if (results.length >= limit) break;
-    const key = b.POSTAL + b.BUILDING;
-    if (seen.has(key)) continue;
-
-    const matches =
-      b.POSTAL.startsWith(q) ||
-      b.BUILDING.toLowerCase().includes(q) ||
-      b.ROAD_NAME.toLowerCase().includes(q) ||
-      b.ADDRESS.toLowerCase().includes(q) ||
-      b.SEARCHVAL.toLowerCase().includes(q);
-
-    if (matches) {
-      seen.add(key);
-      results.push({
-        postal: b.POSTAL,
-        buildingName: b.BUILDING === "NIL" ? b.ADDRESS : b.BUILDING,
-        address: b.ADDRESS,
-        roadName: b.ROAD_NAME,
-        blkNo: b.BLK_NO,
-        lat: parseFloat(b.LATITUDE),
-        lng: parseFloat(b.LONGITUDE),
-      });
-    }
-  }
-
-  return results;
+  return results.map((b) => ({
+    postal: b.postal,
+    buildingName: b.building === "NIL" ? b.address : b.building,
+    address: b.address,
+    roadName: b.road_name,
+    blkNo: b.blk_no,
+    lat: b.latitude,
+    lng: b.longitude,
+  }));
 }
 
 export async function getAllPostalCodes(): Promise<string[]> {
-  const all = await getAllBuildings();
-  const postals = new Set(all.map((b) => b.POSTAL));
-  return Array.from(postals).sort();
+  const db = await getDB();
+  const { results } = await db
+    .prepare("SELECT DISTINCT postal FROM buildings ORDER BY postal")
+    .all<{ postal: string }>();
+  return results.map((r) => r.postal);
 }
 
 export async function getRoadNames(limit = 50): Promise<string[]> {
-  const all = await getAllBuildings();
-  const roads = new Set(all.map((b) => b.ROAD_NAME).filter(Boolean));
-  return Array.from(roads).sort().slice(0, limit);
+  const db = await getDB();
+  const { results } = await db
+    .prepare("SELECT DISTINCT road_name FROM buildings WHERE road_name != '' ORDER BY road_name LIMIT ?")
+    .bind(limit)
+    .all<{ road_name: string }>();
+  return results.map((r) => r.road_name);
 }
-

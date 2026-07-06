@@ -4,9 +4,12 @@
 import PostalCodeClientView from "./PostalCodeClientView";
 
 export function generateStaticParams() {
-  // Return empty — no pages are pre-generated.
-  // Users reach these pages via the 404.html SPA redirect trick.
-  return [];
+  // Next.js treats an empty array here as "generateStaticParams not
+  // implemented" and hard-fails the output:"export" build (it checks
+  // prerenderRoutes.length, not whether the function exists). One real
+  // placeholder param satisfies that check; every other code still reaches
+  // this page via the 404.html SPA redirect trick.
+  return [{ code: "018906" }];
 }
 
 export default function PostalCodeStaticPage() {

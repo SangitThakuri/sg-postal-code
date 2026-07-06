@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllPostalCodes } from "@/lib/data";
+import { getAllPostalCodes, getDataLastModified } from "@/lib/data";
 
 const BASE = "https://www.sgpostalcode.com";
 const BATCH = 40000;
@@ -7,16 +7,16 @@ const BATCH = 40000;
 export async function GET() {
   const postals = await getAllPostalCodes();
   const batches = Math.ceil(postals.length / BATCH);
-  const today = new Date().toISOString().split("T")[0];
+  const lastmod = await getDataLastModified();
 
   const staticEntry = `  <sitemap>
     <loc>${BASE}/sitemap-pages</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmod}</lastmod>
   </sitemap>`;
 
   const postalEntries = Array.from({ length: batches }, (_, i) => `  <sitemap>
     <loc>${BASE}/postal-sitemap/${i + 1}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmod}</lastmod>
   </sitemap>`).join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

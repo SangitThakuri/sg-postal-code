@@ -12,3 +12,9 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+// Gives `next dev` access to local Cloudflare bindings (D1, etc.) via
+// getCloudflareContext(), matching what `wrangler dev` provides after an
+// opennextjs-cloudflare build. No effect on the GitHub Pages export build.
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();

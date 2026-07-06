@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+// No edge runtime: OpenNext's Cloudflare adapter doesn't support edge
+// runtime functions (must run through the Worker's Node.js compat layer
+// instead). This image is fully static, so the default runtime is fine.
 export const alt = "SG Postal Code Finder — Singapore's Postal Code Directory";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

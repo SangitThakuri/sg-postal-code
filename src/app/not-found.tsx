@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SearchBar from "@/components/SearchBar";
 
 export default function NotFound() {
   return (
@@ -10,8 +11,11 @@ export default function NotFound() {
       </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-3">Postal Code Not Found</h1>
       <p className="text-gray-500 mb-8 max-w-md">
-        The postal code you&apos;re looking for doesn&apos;t exist in our database. Please check the code and try again.
+        The postal code you&apos;re looking for doesn&apos;t exist in our database. Try searching below, or check the code and try again.
       </p>
+      <div className="w-full max-w-md mb-8">
+        <SearchBar />
+      </div>
       <div className="flex flex-col sm:flex-row gap-3">
         <Link href="/" className="btn-primary">
           Go to Homepage
