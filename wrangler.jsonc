@@ -12,8 +12,7 @@
     {
       "binding": "DB",
       "database_name": "sgpostalcode-db",
-      // Placeholder — replace with the real id printed by `wrangler d1 create sgpostalcode-db`.
-      "database_id": "REPLACE_WITH_REAL_DATABASE_ID"
+      "database_id": "2aa74d24-8241-4c57-b2e1-dd7edd464dce"
     }
   ],
   "services": [

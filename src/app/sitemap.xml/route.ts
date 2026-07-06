@@ -4,6 +4,11 @@ import { getAllPostalCodes, getDataLastModified } from "@/lib/data";
 const BASE = "https://www.sgpostalcode.com";
 const BATCH = 40000;
 
+// Without this, Next tries to statically prerender this route at build
+// time (no dynamic segment here to force it otherwise) — D1 is only
+// reachable at actual Worker request time, not during `next build`.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const postals = await getAllPostalCodes();
   const batches = Math.ceil(postals.length / BATCH);
