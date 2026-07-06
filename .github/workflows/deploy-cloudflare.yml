@@ -23,6 +23,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # cloudflare-env.d.ts is gitignored (regenerated from wrangler.jsonc,
+      # doesn't need real Cloudflare auth) — without it, `env.DB` has no
+      # type and tsc/next build fail with "Property 'DB' does not exist".
+      - name: Generate Cloudflare types
+        run: npm run cf:typegen
+
       - name: Type check
         run: npx tsc --noEmit
 
@@ -47,6 +53,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Generate Cloudflare types
+        run: npm run cf:typegen
 
       # buildings.json is committed to the repo and no longer read by the app
       # at runtime (D1 is the data source) — this just satisfies the build
