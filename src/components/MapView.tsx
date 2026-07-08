@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { Map as LeafletMap } from "leaflet";
+
+// Leaflet's Icon.Default.prototype._getIconUrl is a private implementation
+// detail (not in @types/leaflet's public surface) that must be deleted so
+// mergeOptions below actually takes effect instead of falling back to it.
+interface IconDefaultPrototype {
+  _getIconUrl?: () => string;
+}
 
 interface MapViewProps {
   lat: number;
@@ -20,7 +28,7 @@ export default function MapView({
   zoom = 17,
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<unknown>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -34,8 +42,7 @@ export default function MapView({
       if (!isMounted || !mapRef.current) return;
 
       // Fix default marker icons
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      delete (L.Icon.Default.prototype as unknown as IconDefaultPrototype)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: "/leaflet/marker-icon-2x.png",
         iconUrl: "/leaflet/marker-icon.png",
@@ -99,8 +106,7 @@ export default function MapView({
     return () => {
       isMounted = false;
       if (mapInstanceRef.current) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (mapInstanceRef.current as any).remove();
+        mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
     };
