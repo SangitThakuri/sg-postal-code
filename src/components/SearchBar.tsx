@@ -85,6 +85,11 @@ export default function SearchBar({ large = false, defaultValue = "" }: SearchBa
             onChange={handleChange}
             onFocus={() => suggestions.length > 0 && setIsOpen(true)}
             placeholder="Search by postal code, building name, or road..."
+            aria-label="Search by postal code, building name, or road"
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+            aria-controls="search-suggestions"
             className={`w-full rounded-xl border border-gray-300 bg-white pl-11 pr-4 text-gray-900 placeholder-gray-400 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 ${
               large ? "py-4 text-lg" : "py-3 text-base"
             }`}
@@ -110,10 +115,17 @@ export default function SearchBar({ large = false, defaultValue = "" }: SearchBa
       </form>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden">
+        <div
+          id="search-suggestions"
+          role="listbox"
+          aria-label="Search suggestions"
+          className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden"
+        >
           {suggestions.map((result, i) => (
             <button
               key={`${result.postal}-${i}`}
+              role="option"
+              aria-selected="false"
               onClick={() => handleSelect(result)}
               className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors"
             >

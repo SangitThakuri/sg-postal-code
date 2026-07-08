@@ -107,6 +107,12 @@ export default function MapView({
   }, [lat, lng, postal, buildingName, address, zoom]);
 
   return (
-    <div ref={mapRef} className="w-full h-full rounded-xl" style={{ minHeight: "400px" }} />
+    <div
+      ref={mapRef}
+      role="region"
+      aria-label={`Map showing the location of ${buildingName && buildingName !== "NIL" ? buildingName : `postal code ${postal}`}${address ? `, ${address}` : ""}`}
+      className="w-full h-full rounded-xl"
+      style={{ minHeight: "400px" }}
+    />
   );
 }

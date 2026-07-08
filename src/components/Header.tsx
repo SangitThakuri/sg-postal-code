@@ -35,7 +35,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-5">
+          <nav aria-label="Main navigation" className="hidden md:flex items-center gap-5">
             {NAV_LINKS.map((l) => (
               <Link key={l.href} href={l.href} className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors whitespace-nowrap">
                 {l.label}
@@ -48,6 +48,8 @@ export default function Header() {
             className="md:hidden rounded-lg p-2 text-gray-600 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             {open ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -63,9 +65,9 @@ export default function Header() {
 
         {/* Mobile drawer */}
         {open && (
-          <div className="md:hidden border-t border-gray-100 pb-4 pt-3 space-y-3">
+          <div id="mobile-menu" className="md:hidden border-t border-gray-100 pb-4 pt-3 space-y-3">
             <SearchBar />
-            <nav className="grid grid-cols-2 gap-1">
+            <nav aria-label="Mobile navigation" className="grid grid-cols-2 gap-1">
               {NAV_LINKS.map((l) => (
                 <Link
                   key={l.href}
