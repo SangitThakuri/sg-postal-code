@@ -457,6 +457,31 @@ export default async function PostalCodePage({ params }: PageProps) {
             </p>
           </div>
         </div>
+
+        {/* Same-district cross-links */}
+        {district && (
+          <div className="mt-8 card">
+            <h2 className="text-lg font-bold text-gray-900 mb-1">More in {district.name}</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Postal code {code} is in sector {sector}, part of the {district.name} district (sectors {district.sector}).
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {district.prefix.map((p) => (
+                <Link
+                  key={p}
+                  href={`/search?q=${p}`}
+                  className={`rounded-full px-3 py-1.5 text-sm font-mono font-semibold transition-colors ${
+                    p === sector
+                      ? "bg-primary-600 text-white"
+                      : "bg-primary-50 text-primary-700 hover:bg-primary-100"
+                  }`}
+                >
+                  {p}xxxx
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
