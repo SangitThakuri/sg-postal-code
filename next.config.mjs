@@ -16,7 +16,38 @@ const nextConfig = {
   // under output:"export" (GitHub Pages build), which is fine since these
   // headers only matter for the live Worker.
   async headers() {
+    // CSP allows 'unsafe-inline' for script/style: the site renders
+    // per-page JSON-LD (FAQ/Breadcrumb/Place schema) via
+    // dangerouslySetInnerHTML with dynamic content, and Leaflet injects
+    // inline style="" attributes for markers/popups — neither has a
+    // static hash, and nonces would need middleware (broken on this
+    // stack, see the Cache-Control commit). Still a real improvement:
+    // default-src 'self' blocks arbitrary third-party script/frame
+    // injection; only actual external resource in use (OSM map tiles)
+    // is explicitly allowlisted rather than left wide open.
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https://*.tile.openstreetmap.org",
+      "font-src 'self'",
+      "connect-src 'self'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+    ].join("; ");
+
+    const securityHeaders = [
+      { key: "Content-Security-Policy", value: csp },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ];
+
     return [
+      { source: "/:path*", headers: securityHeaders },
       {
         source: "/postal/:path*",
         headers: [
