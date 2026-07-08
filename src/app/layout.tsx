@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GhPagesRedirect from "@/components/GhPagesRedirect";
 
 const isGhPages = process.env.NEXT_PUBLIC_GITHUB_PAGES === "true";
+
+// Self-hosted via next/font instead of a CSS @import from Google's CDN —
+// removes an external render-blocking round-trip and gives automatic
+// font-display + preload handling. Same weights as before.
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -54,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en-SG">
+    <html lang="en-SG" className={inter.variable}>
       <body className="min-h-screen flex flex-col">
         {isGhPages && <GhPagesRedirect />}
         <Header />
