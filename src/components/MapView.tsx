@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Map as LeafletMap } from "leaflet";
 
 // Leaflet's Icon.Default.prototype._getIconUrl is a private implementation
@@ -29,6 +29,7 @@ export default function MapView({
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -99,6 +100,8 @@ export default function MapView({
         .addTo(map)
         .bindPopup(popupContent, { maxWidth: 280 })
         .openPopup();
+
+      if (isMounted) setIsLoading(false);
     }
 
     initMap();
@@ -113,12 +116,16 @@ export default function MapView({
   }, [lat, lng, postal, buildingName, address, zoom]);
 
   return (
-    <div
-      ref={mapRef}
-      role="region"
-      aria-label={`Map showing the location of ${buildingName && buildingName !== "NIL" ? buildingName : `postal code ${postal}`}${address ? `, ${address}` : ""}`}
-      className="w-full h-full rounded-xl"
-      style={{ minHeight: "400px" }}
-    />
+    <div className="relative w-full h-full" style={{ minHeight: "400px" }}>
+      {isLoading && (
+        <div className="absolute inset-0 rounded-xl bg-gray-200 animate-pulse" aria-hidden="true" />
+      )}
+      <div
+        ref={mapRef}
+        role="region"
+        aria-label={`Map showing the location of ${buildingName && buildingName !== "NIL" ? buildingName : `postal code ${postal}`}${address ? `, ${address}` : ""}`}
+        className="w-full h-full rounded-xl"
+      />
+    </div>
   );
 }
