@@ -4,7 +4,10 @@ import { searchBuildings } from "@/lib/data";
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const q = searchParams.get("q") ?? "";
-  const limit = Math.min(parseInt(searchParams.get("limit") ?? "30"), 100);
+  const requestedLimit = parseInt(searchParams.get("limit") ?? "30", 10);
+  const limit = Number.isFinite(requestedLimit)
+    ? Math.min(Math.max(requestedLimit, 1), 100)
+    : 30;
 
   if (!q.trim()) {
     return NextResponse.json([]);
