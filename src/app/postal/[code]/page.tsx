@@ -333,7 +333,7 @@ export default async function PostalCodePage({ params }: PageProps) {
             </div>
 
             {/* Page actions */}
-            <PostalActions summaryText={summaryText} />
+            <PostalActions summaryText={summaryText} pageUrl={`${BASE_URL}/postal/${code}`} />
 
             {/* Delivery info */}
             <div className="card border-amber-200 bg-amber-50">

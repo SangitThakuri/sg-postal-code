@@ -4,10 +4,14 @@ import { useState } from "react";
 
 interface PostalActionsProps {
   summaryText: string;
+  pageUrl: string;
 }
 
-export default function PostalActions({ summaryText }: PostalActionsProps) {
+export default function PostalActions({ summaryText, pageUrl }: PostalActionsProps) {
   const [copied, setCopied] = useState(false);
+  const [qrSvg, setQrSvg] = useState<string | null>(null);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [qrLoading, setQrLoading] = useState(false);
 
   async function handleCopyAll() {
     try {
@@ -24,8 +28,27 @@ export default function PostalActions({ summaryText }: PostalActionsProps) {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function handleToggleQr() {
+    if (qrOpen) {
+      setQrOpen(false);
+      return;
+    }
+    if (!qrSvg) {
+      setQrLoading(true);
+      // Lazy-loaded so this dependency never touches the initial page bundle.
+      const qrcodeGenerator = (await import("qrcode-generator")).default;
+      const qr = qrcodeGenerator(0, "M");
+      qr.addData(pageUrl);
+      qr.make();
+      setQrSvg(qr.createSvgTag(4, 4));
+      setQrLoading(false);
+    }
+    setQrOpen(true);
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 print:hidden">
+    <div className="relative print:hidden">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <button
         type="button"
         onClick={handleCopyAll}
@@ -53,9 +76,35 @@ export default function PostalActions({ summaryText }: PostalActionsProps) {
         </svg>
         Print
       </button>
+      <button
+        type="button"
+        onClick={handleToggleQr}
+        aria-expanded={qrOpen}
+        aria-controls="qr-code-panel"
+        className="flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-primary-400 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
+      >
+        <svg className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M3 3.5A1.5 1.5 0 014.5 2h3A1.5 1.5 0 019 3.5v3A1.5 1.5 0 017.5 8h-3A1.5 1.5 0 013 6.5v-3zm2 .5v2h2V4H5zM3 12.5A1.5 1.5 0 014.5 11h3A1.5 1.5 0 019 12.5v3A1.5 1.5 0 017.5 17h-3A1.5 1.5 0 013 15.5v-3zm2 .5v2h2v-2H5zM13.5 2A1.5 1.5 0 0012 3.5v3A1.5 1.5 0 0013.5 8h3A1.5 1.5 0 0018 6.5v-3A1.5 1.5 0 0016.5 2h-3zM14 4v2h2V4h-2zm-2 7.5a.5.5 0 01.5-.5h2a.5.5 0 01.5.5v.5h.5a.5.5 0 01.5.5v2a.5.5 0 01-.5.5H15v.5a.5.5 0 01-.5.5h-2a.5.5 0 01-.5-.5v-4zm3.5 4.5v-2h-2v2h2z" />
+        </svg>
+        {qrLoading ? "Loading…" : "QR Code"}
+      </button>
       <span role="status" aria-live="polite" className="sr-only">
         {copied ? "All page details copied to clipboard" : ""}
       </span>
+    </div>
+
+    {qrOpen && qrSvg && (
+      <div
+        id="qr-code-panel"
+        className="absolute z-20 mt-3 right-0 rounded-xl border border-gray-200 bg-white p-4 shadow-lg"
+      >
+        <div
+          className="h-40 w-40 [&_svg]:h-full [&_svg]:w-full"
+          dangerouslySetInnerHTML={{ __html: qrSvg }}
+        />
+        <p className="mt-2 text-center text-xs text-gray-500">Scan to open this page</p>
+      </div>
+    )}
     </div>
   );
 }
