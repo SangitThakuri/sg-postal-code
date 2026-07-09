@@ -100,6 +100,41 @@ export async function searchBuildings(
   }));
 }
 
+// Batch equivalent of getPostalGroup — one query with an IN(...) clause
+// instead of N round trips. Returns a map keyed by postal so the caller can
+// tell which of the requested codes came back empty (invalid/not found).
+export async function getPostalGroupsBatch(postals: string[]): Promise<Map<string, PostalGroup>> {
+  const groups = new Map<string, PostalGroup>();
+  if (!postals.length) return groups;
+
+  const db = await getDB();
+  const placeholders = postals.map(() => "?").join(",");
+  const { results } = await db
+    .prepare(`SELECT * FROM buildings WHERE postal IN (${placeholders})`)
+    .bind(...postals)
+    .all<BuildingRow>();
+
+  const byPostal = new Map<string, Building[]>();
+  for (const row of results) {
+    const building = rowToBuilding(row);
+    const arr = byPostal.get(building.POSTAL) ?? [];
+    arr.push(building);
+    byPostal.set(building.POSTAL, arr);
+  }
+
+  byPostal.forEach((buildings, postal) => {
+    const primary = buildings.find((b) => b.BUILDING !== "NIL") ?? buildings[0];
+    groups.set(postal, {
+      postal,
+      buildings,
+      primaryBuilding: primary,
+      lat: parseFloat(primary.LATITUDE),
+      lng: parseFloat(primary.LONGITUDE),
+    });
+  });
+  return groups;
+}
+
 export async function getAllPostalCodes(): Promise<string[]> {
   const db = await getDB();
   const { results } = await db

@@ -47,6 +47,7 @@ export default function Footer() {
               {[
                 { label: "Home", href: "/" },
                 { label: "Browse All Postal Codes", href: "/search" },
+                { label: "Batch Lookup", href: "/batch" },
                 { label: "About Us", href: "/about" },
                 { label: "Contact Us", href: "/contact" },
               ].map((l) => (
