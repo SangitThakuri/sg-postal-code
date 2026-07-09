@@ -35,3 +35,16 @@
   z-index: 1;
   border-radius: 0.75rem;
 }
+
+/* Print: hide site chrome and the interactive map, keep the actual content */
+@media print {
+  header,
+  footer,
+  .leaflet-container {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+}

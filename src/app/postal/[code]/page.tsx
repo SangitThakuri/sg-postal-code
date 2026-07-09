@@ -378,7 +378,7 @@ export default async function PostalCodePage({ params }: PageProps) {
           <div className="lg:col-span-3 space-y-5 order-1 lg:order-2">
 
             {/* Map */}
-            <div className="overflow-hidden rounded-2xl shadow-sm border border-gray-200" style={{ height: "380px" }}>
+            <div className="print:hidden overflow-hidden rounded-2xl shadow-sm border border-gray-200" style={{ height: "380px" }}>
               <MapView lat={lat} lng={lng} postal={code} buildingName={buildingName} address={b.ADDRESS} />
             </div>
 
