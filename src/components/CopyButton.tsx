@@ -13,6 +13,10 @@ export default function CopyButton({ text, variant = "dark" }: CopyButtonProps) 
     try {
       await navigator.clipboard.writeText(text);
     } catch {
+      // navigator.clipboard requires a secure context and isn't available in
+      // every browser/embedded-webview combination. execCommand is
+      // deprecated but still works everywhere as a last-resort fallback —
+      // intentionally kept for that reason, not an oversight.
       const ta = document.createElement("textarea");
       ta.value = text;
       document.body.appendChild(ta);
