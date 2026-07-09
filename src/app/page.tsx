@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import SearchBar from "@/components/SearchBar";
+import RecentlyViewedList from "@/components/RecentlyViewedList";
 import { SG_DISTRICTS } from "@/lib/data";
 
 const BASE_URL = "https://www.sgpostalcode.com";
@@ -156,6 +157,10 @@ export default function HomePage() {
           </svg>
         </div>
       </section>
+
+      {/* Recently Viewed — client-only, renders nothing (including its own
+          section wrapper) until localStorage has entries */}
+      <RecentlyViewedList />
 
       {/* Features */}
       <section className="bg-gray-50 py-16">

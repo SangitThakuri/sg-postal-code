@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import PostalCard from "@/components/PostalCard";
+import RecentlyViewedList from "@/components/RecentlyViewedList";
 import { searchBuildings } from "@/lib/data";
 
 interface PageProps {
@@ -159,6 +160,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
       ) : (
         /* Browse mode - show suggested searches */
         <div className="space-y-10">
+          <RecentlyViewedList bare />
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Popular Areas</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">

@@ -13,6 +13,7 @@ import PostalCard from "@/components/PostalCard";
 import CopyButton from "@/components/CopyButton";
 import SgPinIcon from "@/components/SgPinIcon";
 import PostalActions from "@/components/PostalActions";
+import RecentlyViewedTracker from "@/components/RecentlyViewedTracker";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 
@@ -191,6 +192,18 @@ export default async function PostalCodePage({ params }: PageProps) {
 
   return (
     <>
+      <RecentlyViewedTracker
+        entry={{
+          postal: code,
+          buildingName,
+          address: b.ADDRESS,
+          roadName: b.ROAD_NAME,
+          blkNo: b.BLK_NO,
+          lat,
+          lng,
+        }}
+      />
+
       {/* JSON-LD Structured Data */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
