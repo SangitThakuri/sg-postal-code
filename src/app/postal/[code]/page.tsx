@@ -12,6 +12,7 @@ import {
 import PostalCard from "@/components/PostalCard";
 import CopyButton from "@/components/CopyButton";
 import SgPinIcon from "@/components/SgPinIcon";
+import PostalActions from "@/components/PostalActions";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 
@@ -157,6 +158,17 @@ export default async function PostalCodePage({ params }: PageProps) {
       { "@type": "ListItem", position: 3, name: code, item: `${BASE_URL}/postal/${code}` },
     ],
   };
+
+  const summaryText = [
+    `Singapore Postal Code: ${code}`,
+    `Building: ${buildingName}`,
+    `Address: ${b.ADDRESS}, Singapore ${code}`,
+    `Road: ${b.ROAD_NAME}`,
+    `District: ${district?.name ?? region}`,
+    `Building Type: ${buildingType}`,
+    `Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+    `${BASE_URL}/postal/${code}`,
+  ].join("\n");
 
   const placeSchema = {
     "@context": "https://schema.org",
@@ -319,6 +331,9 @@ export default async function PostalCodePage({ params }: PageProps) {
                 OpenStreetMap
               </a>
             </div>
+
+            {/* Page actions */}
+            <PostalActions summaryText={summaryText} />
 
             {/* Delivery info */}
             <div className="card border-amber-200 bg-amber-50">
