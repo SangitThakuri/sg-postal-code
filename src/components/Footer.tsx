@@ -1,5 +1,11 @@
 import Link from "next/link";
 import SgPinIcon from "./SgPinIcon";
+import { SG_DISTRICTS } from "@/lib/data-utils";
+
+// One representative sector per district, derived from the same source of
+// truth the postal pages use — previously a separately hardcoded list that
+// only covered the first ~15 districts and could drift out of sync.
+const BROWSE_SECTORS = SG_DISTRICTS.map((d) => d.prefix[0]);
 
 const POPULAR_SEARCHES = [
   { label: "Orchard Road", href: "/search?q=orchard+road" },
@@ -81,7 +87,7 @@ export default function Footer() {
 
             <h3 className="font-semibold text-white mt-6 mb-3 text-sm uppercase tracking-wider">Browse Sectors</h3>
             <div className="flex flex-wrap gap-1.5">
-              {["01", "09", "14", "20", "25", "31", "38", "46", "53", "59"].map((s) => (
+              {BROWSE_SECTORS.map((s) => (
                 <Link
                   key={s}
                   href={`/search?q=${s}`}
