@@ -57,6 +57,14 @@ export const metadata: Metadata = {
     shortcut: "/icon.svg",
     apple: "/icon.svg",
   },
+  // Postal codes are 6-digit numbers, sometimes shown right next to actual
+  // phone numbers (e.g. contact page) — stop mobile browsers from
+  // auto-linking either as tap-to-call/address/email.
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
 };
 
 // themeColor/viewport moved out of `metadata` into its own export — Next 14
