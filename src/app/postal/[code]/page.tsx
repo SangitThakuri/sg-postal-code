@@ -346,7 +346,11 @@ export default async function PostalCodePage({ params }: PageProps) {
             </div>
 
             {/* Page actions */}
-            <PostalActions summaryText={summaryText} pageUrl={`${BASE_URL}/postal/${code}`} />
+            <PostalActions
+              summaryText={summaryText}
+              pageUrl={`${BASE_URL}/postal/${code}`}
+              shareTitle={`Postal Code ${code} — ${buildingName}, Singapore`}
+            />
 
             {/* Delivery info */}
             <div className="card border-amber-200 bg-amber-50">
