@@ -27,11 +27,13 @@ const nextConfig = {
     // is explicitly allowlisted rather than left wide open.
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      // googletagmanager.com hosts the gtag.js script itself; the actual
+      // analytics beacons go to google-analytics.com via connect-src.
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https://*.tile.openstreetmap.org",
       "font-src 'self'",
-      "connect-src 'self'",
+      "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -46,8 +48,30 @@ const nextConfig = {
       { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
     ];
 
+    // Next.js gives static ("○") pages like these a 1-year default
+    // Cache-Control (s-maxage=31536000). That was harmless before Workers
+    // Cache existed, but now that it's enabled (wrangler.jsonc), Cloudflare
+    // actually honors it — meaning any content change to these pages would
+    // silently not appear at the edge for up to a year. Overriding with a
+    // short, sane lifetime on every static page not already covered by the
+    // /postal or /search rules below.
+    const staticPageCacheControl = {
+      key: "Cache-Control",
+      value: "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+    };
+    const staticPagePaths = [
+      "/",
+      "/about",
+      "/contact",
+      "/privacy-policy",
+      "/terms-of-service",
+      "/disclaimer",
+      "/cookie-policy",
+    ];
+
     return [
       { source: "/:path*", headers: securityHeaders },
+      ...staticPagePaths.map((source) => ({ source, headers: [staticPageCacheControl] })),
       {
         source: "/postal/:path*",
         headers: [

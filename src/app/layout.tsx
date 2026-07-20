@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GhPagesRedirect from "@/components/GhPagesRedirect";
 
 const isGhPages = process.env.NEXT_PUBLIC_GITHUB_PAGES === "true";
+const GA_MEASUREMENT_ID = "G-Z5DXN1WGDV";
 
 // Self-hosted via next/font instead of a CSS @import from Google's CDN —
 // removes an external render-blocking round-trip and gives automatic
@@ -87,6 +89,18 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );
