@@ -137,8 +137,15 @@ export async function getPostalGroupsBatch(postals: string[]): Promise<Map<strin
 
 export async function getAllPostalCodes(): Promise<string[]> {
   const db = await getDB();
+  // The upstream feed has a handful of rows with postal="NIL" (same
+  // sentinel convention it uses for missing building names) instead of a
+  // real 6-digit code. Without this filter those ended up in the sitemap
+  // as /postal/NIL — a URL that immediately 404s (page.tsx only accepts
+  // /^\d{6}$/) and was tripping Google's sitemap parser.
   const { results } = await db
-    .prepare("SELECT DISTINCT postal FROM buildings ORDER BY postal")
+    .prepare(
+      "SELECT DISTINCT postal FROM buildings WHERE postal GLOB '[0-9][0-9][0-9][0-9][0-9][0-9]' ORDER BY postal"
+    )
     .all<{ postal: string }>();
   return results.map((r) => r.postal);
 }
