@@ -135,17 +135,34 @@ export async function getPostalGroupsBatch(postals: string[]): Promise<Map<strin
   return groups;
 }
 
-export async function getAllPostalCodes(): Promise<string[]> {
+// Same GLOB filter as getPostalCodesPage/getPostalCodeCount below: the
+// upstream feed has a handful of rows with postal="NIL" (same sentinel
+// convention it uses for missing building names) instead of a real 6-digit
+// code. Without this filter those ended up in the sitemap as /postal/NIL —
+// a URL that immediately 404s (page.tsx only accepts /^\d{6}$/) and was
+// tripping Google's sitemap parser.
+const VALID_POSTAL_FILTER = "postal GLOB '[0-9][0-9][0-9][0-9][0-9][0-9]'";
+
+export async function getPostalCodeCount(): Promise<number> {
   const db = await getDB();
-  // The upstream feed has a handful of rows with postal="NIL" (same
-  // sentinel convention it uses for missing building names) instead of a
-  // real 6-digit code. Without this filter those ended up in the sitemap
-  // as /postal/NIL — a URL that immediately 404s (page.tsx only accepts
-  // /^\d{6}$/) and was tripping Google's sitemap parser.
+  const row = await db
+    .prepare(`SELECT COUNT(DISTINCT postal) as count FROM buildings WHERE ${VALID_POSTAL_FILTER}`)
+    .first<{ count: number }>();
+  return row?.count ?? 0;
+}
+
+// Paginated equivalent of the old getAllPostalCodes() — the sitemap route
+// only ever needs one batch at a time, so fetching all ~120k codes on every
+// request and slicing in JS was pure waste (and meant Google's crawler was
+// triggering a full-table scan on every one of the 4 sitemap pages it
+// fetches). LIMIT/OFFSET pushes the slicing into D1 instead.
+export async function getPostalCodesPage(offset: number, limit: number): Promise<string[]> {
+  const db = await getDB();
   const { results } = await db
     .prepare(
-      "SELECT DISTINCT postal FROM buildings WHERE postal GLOB '[0-9][0-9][0-9][0-9][0-9][0-9]' ORDER BY postal"
+      `SELECT DISTINCT postal FROM buildings WHERE ${VALID_POSTAL_FILTER} ORDER BY postal LIMIT ?2 OFFSET ?1`
     )
+    .bind(offset, limit)
     .all<{ postal: string }>();
   return results.map((r) => r.postal);
 }

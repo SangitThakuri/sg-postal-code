@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllPostalCodes, getDataLastModified } from "@/lib/data";
+import { getPostalCodeCount, getDataLastModified } from "@/lib/data";
 
 const BASE = "https://www.sgpostalcode.com";
 const BATCH = 40000;
@@ -10,8 +10,8 @@ const BATCH = 40000;
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const postals = await getAllPostalCodes();
-  const batches = Math.ceil(postals.length / BATCH);
+  const count = await getPostalCodeCount();
+  const batches = Math.ceil(count / BATCH);
   const lastmod = await getDataLastModified();
 
   const staticEntry = `  <sitemap>

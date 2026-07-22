@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllPostalCodes, getDataLastModified } from "@/lib/data";
+import { getPostalCodesPage, getDataLastModified } from "@/lib/data";
 
 const BASE = "https://www.sgpostalcode.com";
 const BATCH = 40000;
@@ -15,9 +15,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ pag
     return new NextResponse("Not Found", { status: 404 });
   }
 
-  const postals = await getAllPostalCodes();
-  const start = (page - 1) * BATCH;
-  const batch = postals.slice(start, start + BATCH);
+  const batch = await getPostalCodesPage((page - 1) * BATCH, BATCH);
 
   if (!batch.length) {
     return new NextResponse("Not Found", { status: 404 });
