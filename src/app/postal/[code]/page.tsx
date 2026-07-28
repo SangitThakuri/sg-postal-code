@@ -48,6 +48,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `Postal Code ${code} | SG Postal Code Finder`,
       description: `${building}, ${b.ADDRESS}`,
       url: `${BASE_URL}/postal/${code}`,
+      // No per-postal preview image (was CPU-limit-500ing on the Workers
+      // Free plan, see the opengraph-image.tsx removal) — an explicit
+      // openGraph object here suppresses Next's file-convention image
+      // inheritance from the root segment, so it has to be pointed at
+      // the shared static image explicitly instead.
+      images: [`${BASE_URL}/opengraph-image`],
     },
     alternates: { canonical: `${BASE_URL}/postal/${code}` },
   };
