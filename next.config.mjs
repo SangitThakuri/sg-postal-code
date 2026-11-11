@@ -73,11 +73,16 @@ const nextConfig = {
       { source: "/:path*", headers: securityHeaders },
       ...staticPagePaths.map((source) => ({ source, headers: [staticPageCacheControl] })),
       {
+        // Postal pages are pure functions of seed data (refreshed monthly),
+        // so a day at the edge is safe. This matters beyond latency: every
+        // uncached render hits D1, and on the Free plan's 5M rows/day
+        // budget, Googlebot re-crawling the 121k-URL sitemap through origin
+        // was what exhausted the quota and 500'd the site.
         source: "/postal/:path*",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+            value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
           },
         ],
       },
@@ -86,7 +91,7 @@ const nextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=300, s-maxage=300, stale-while-revalidate=3600",
+            value: "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
           },
         ],
       },

@@ -61,9 +61,17 @@ for (const [prefix, rows] of Object.entries(sectors)) {
 }
 
 const today = new Date().toISOString().split("T")[0];
+// Persisted for getPostalCodeCount() in src/lib/data.ts — a live
+// COUNT(DISTINCT postal) walks the whole postal index (~141k rows read),
+// which the sitemap index route must not do per fetch on D1's free-tier
+// 5M rows/day budget.
+const distinctPostalCount = new Set(
+  buildings.map((b) => b.POSTAL).filter((p) => /^\d{6}$/.test(p || ""))
+).size;
 fs.writeFileSync(
   path.join(OUTPUT_DIR, "_meta.sql"),
-  `INSERT OR REPLACE INTO meta (key, value) VALUES ('data_last_modified', ${sqlString(today)});\n`
+  `INSERT OR REPLACE INTO meta (key, value) VALUES ('data_last_modified', ${sqlString(today)});\n` +
+    `INSERT OR REPLACE INTO meta (key, value) VALUES ('postal_code_count', '${distinctPostalCount}');\n`
 );
 
 console.log(`Done — ${totalRows.toLocaleString()} rows across ${Object.keys(sectors).length} sector files written to d1-seed/`);

@@ -75,6 +75,41 @@ export async function searchBuildings(
   if (!q) return [];
 
   const db = await getDB();
+
+  // Numeric queries are postal-prefix lookups. The multi-column LIKE scan
+  // below reads all ~141k rows — D1 bills rows scanned, and on the Workers
+  // Free plan's 5M rows/day budget (enforced since Sep 1, 2026) that scan
+  // on every /postal page + sitemap crawl exhausted the daily quota and
+  // 500'd the whole site until midnight UTC. GLOB '63*' instead walks
+  // idx_buildings_postal, and DISTINCT postal + LIMIT stops after `limit`
+  // index entries without touching any table rows.
+  if (/^\d+$/.test(q)) {
+    const { results: postalRows } = await db
+      .prepare(
+        "SELECT DISTINCT postal FROM buildings WHERE postal GLOB ?1 LIMIT ?2"
+      )
+      .bind(`${q}*`, limit)
+      .all<{ postal: string }>();
+    if (!postalRows.length) return [];
+
+    const groups = await getPostalGroupsBatch(postalRows.map((r) => r.postal));
+    return postalRows
+      .map((r) => groups.get(r.postal))
+      .filter((g): g is PostalGroup => Boolean(g))
+      .map((g) => ({
+        postal: g.postal,
+        buildingName:
+          g.primaryBuilding.BUILDING !== "NIL"
+            ? g.primaryBuilding.BUILDING
+            : g.primaryBuilding.ADDRESS,
+        address: g.primaryBuilding.ADDRESS,
+        roadName: g.primaryBuilding.ROAD_NAME,
+        blkNo: g.primaryBuilding.BLK_NO,
+        lat: g.lat,
+        lng: g.lng,
+      }));
+  }
+
   const { results } = await db
     .prepare(
       `SELECT DISTINCT postal, building, address, road_name, blk_no, searchval, latitude, longitude
@@ -108,18 +143,26 @@ export async function getPostalGroupsBatch(postals: string[]): Promise<Map<strin
   if (!postals.length) return groups;
 
   const db = await getDB();
-  const placeholders = postals.map(() => "?").join(",");
-  const { results } = await db
-    .prepare(`SELECT * FROM buildings WHERE postal IN (${placeholders})`)
-    .bind(...postals)
-    .all<BuildingRow>();
-
   const byPostal = new Map<string, Building[]>();
-  for (const row of results) {
-    const building = rowToBuilding(row);
-    const arr = byPostal.get(building.POSTAL) ?? [];
-    arr.push(building);
-    byPostal.set(building.POSTAL, arr);
+
+  // D1 caps bound parameters per statement at 100 — a batch of more codes
+  // than that (the batch-lookup UI accepts up to 500) previously blew up
+  // the whole /batch page. Chunked statements keep every bind under the
+  // cap while staying on the postal index.
+  for (let i = 0; i < postals.length; i += 100) {
+    const chunk = postals.slice(i, i + 100);
+    const placeholders = chunk.map(() => "?").join(",");
+    const { results } = await db
+      .prepare(`SELECT * FROM buildings WHERE postal IN (${placeholders})`)
+      .bind(...chunk)
+      .all<BuildingRow>();
+
+    for (const row of results) {
+      const building = rowToBuilding(row);
+      const arr = byPostal.get(building.POSTAL) ?? [];
+      arr.push(building);
+      byPostal.set(building.POSTAL, arr);
+    }
   }
 
   byPostal.forEach((buildings, postal) => {
@@ -143,12 +186,46 @@ export async function getPostalGroupsBatch(postals: string[]): Promise<Map<strin
 // tripping Google's sitemap parser.
 const VALID_POSTAL_FILTER = "postal GLOB '[0-9][0-9][0-9][0-9][0-9][0-9]'";
 
+// Distinct 6-digit postal codes in the deployed dataset (July 2026 seed).
+// Only used when meta has no cached count AND the live COUNT can't run —
+// which is exactly the state production is in right after this ships:
+// today's D1 free-tier read budget is already too depleted for a 141k-row
+// index walk. A slightly stale count only changes how many
+// /postal-sitemap/N files the index lists; the meta backfill corrects it
+// as soon as a COUNT succeeds (after the next midnight UTC reset).
+const FALLBACK_POSTAL_CODE_COUNT = 121360;
+
 export async function getPostalCodeCount(): Promise<number> {
   const db = await getDB();
-  const row = await db
-    .prepare(`SELECT COUNT(DISTINCT postal) as count FROM buildings WHERE ${VALID_POSTAL_FILTER}`)
-    .first<{ count: number }>();
-  return row?.count ?? 0;
+  // COUNT(DISTINCT postal) walks the whole postal index (~141k rows read) —
+  // the sitemap index route runs it on every uncached fetch, which alone
+  // burned ~3% of the Free plan's daily 5M row-read budget. The count
+  // changes only when the seed data does, so it's stored in meta at seed
+  // time (generate-d1-seed.js) and lazily backfilled here once if absent.
+  const cached = await db
+    .prepare("SELECT value FROM meta WHERE key = 'postal_code_count'")
+    .first<{ value: string }>();
+  if (cached && !isNaN(parseInt(cached.value, 10))) {
+    return parseInt(cached.value, 10);
+  }
+
+  try {
+    const row = await db
+      .prepare(`SELECT COUNT(DISTINCT postal) as count FROM buildings WHERE ${VALID_POSTAL_FILTER}`)
+      .first<{ count: number }>();
+    const count = row?.count ?? 0;
+    if (count > 0) {
+      await db
+        .prepare("INSERT OR REPLACE INTO meta (key, value) VALUES ('postal_code_count', ?1)")
+        .bind(String(count))
+        .run();
+      return count;
+    }
+  } catch {
+    // Most likely the free-tier daily row-read limit rejecting a 141k-row
+    // index walk — serve the sitemap from the fallback rather than 500ing.
+  }
+  return FALLBACK_POSTAL_CODE_COUNT;
 }
 
 // Paginated equivalent of the old getAllPostalCodes() — the sitemap route
